@@ -1,0 +1,18 @@
+[package]
+name = "voxel_rust_test"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+wgpu = "0.15.1"
+winit = "0.28.3"
+instant = "0.1.12"
+async-std = "1.12"
+profiling = "1.0"
+tracy-client = "0.15"
+cgmath = "0.18"
+env_logger = "0.10"
+pollster = "0.3.0"
+log = "0.4"
