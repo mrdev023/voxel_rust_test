@@ -1,6 +1,6 @@
 mod renderer;
 
-use std::sync::Arc;
+use std::sync::{Arc, Mutex, RwLock};
 use winit::event::{ElementState, Event, KeyboardInput, VirtualKeyCode, WindowEvent};
 use winit::event_loop::{ControlFlow, EventLoop};
 use crate::renderer::graphics_renderer::GraphicsRenderer;
@@ -67,18 +67,18 @@ pub async fn run () {
         .build(&event_loop)
         .unwrap();
 
-    let mut renderer = Arc::from(GraphicsRenderer::initialize(&window).await);
+    let renderer = Arc::from(Mutex::from(GraphicsRenderer::initialize(&window).await));
     let mut last_render_time = instant::Instant::now();
 
     event_loop.run(move |base_event, _, control_flow| {
         *control_flow = ControlFlow::Poll;
-        let mut renderer = Arc::get_mut(&mut renderer).unwrap();
-        handle_event(&base_event, &window, &mut renderer, control_flow);
+        let mut renderer_guard = renderer.lock().unwrap();
+        handle_event(&base_event, &window, &mut renderer_guard, control_flow);
         let now = instant::Instant::now();
         let dt = now - last_render_time;
         last_render_time = now;
-        update(dt, &mut renderer);
-        render(control_flow, &mut renderer);
+        update(dt, &mut renderer_guard);
+        render(control_flow, &mut renderer_guard);
     });
 }
 
